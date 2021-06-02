@@ -1,27 +1,30 @@
 package nl.landviz;
 
-import org.javacord.api.DiscordApi;
-import org.javacord.api.DiscordApiBuilder;
-
+import discord4j.core.DiscordClient;
+import discord4j.core.GatewayDiscordClient;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class Bread {
     private static Bread bread = new Bread();
     
-    public DiscordApi api;
-    public static Dotenv dotenv = Dotenv.load();
-    
-    private Bread() { }
+    public Dotenv dotenv = Dotenv.load();
+
+    public DiscordClient client;
+    public GatewayDiscordClient gateway;
+
+    private Bread() {
+        this.client = DiscordClient.create(this.dotenv.get("DISCORD_TOKEN"));
+    }
 
     public static Bread getInstance() {
         return bread;
     }
 
     public void initialize() {
-        api = new DiscordApiBuilder()
-            .setToken(dotenv.get("DISCORD_TOKEN"))
-            .login()
-            .join()
-        ;
+        this.gateway = this.client.login().block();
+    }
+
+    public void block() {
+        this.gateway.onDisconnect().block();
     }
 }

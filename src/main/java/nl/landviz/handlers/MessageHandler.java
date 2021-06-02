@@ -1,9 +1,9 @@
 package nl.landviz.handlers;
 
-import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
-
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.core.object.reaction.ReactionEmoji;
 import nl.landviz.Bread;
 
 public class MessageHandler {
@@ -18,35 +18,42 @@ public class MessageHandler {
     }
 
     private void register() {
-        bread.api.addMessageCreateListener(messageCreateEvent -> {
-            TextChannel genericChannel = messageCreateEvent.getChannel();
+        this.bread.gateway.on(MessageCreateEvent.class).subscribe(event -> {
+            Message message = event.getMessage();
 
-            if (!(genericChannel instanceof ServerTextChannel channel)) {
-                return;
-            }
-    
-            String channelName = channel.getName().toLowerCase();
-    
-            boolean foundChannelIdentifier = false;
-    
-            for (int i = 0; i < this.breadChannelIdentifiers.length; i++) {
-                if (channelName.contains(this.breadChannelIdentifiers[i])) {
-                    foundChannelIdentifier = true;
-    
-                    break;
+            message.getChannel().doOnNext(channel -> {
+                if (!(channel instanceof TextChannel textChannel)) {
+                    return;
                 }
-            }
-    
-            if (!foundChannelIdentifier) {
-                return;
-            }
-            
-            handleMessage(channel, messageCreateEvent.getMessage());
+
+                String channelName = textChannel.getName().toLowerCase();
+
+                boolean foundChannelIdentifier = false;
+
+                for (int i = 0; i < this.breadChannelIdentifiers.length; i++) {
+                    if (channelName.contains(this.breadChannelIdentifiers[i])) {
+                        foundChannelIdentifier = true;
+                        break;
+                    }
+                }
+
+                if (!foundChannelIdentifier) {
+                    return;
+                }
+
+                handleMessage(textChannel, message);
+            }).subscribe();
         });
     }
 
-    private void handleMessage(ServerTextChannel channel, Message message) {
-        message.addReaction(message.getAuthor().getDisplayName().contains("🇫🇷") ? "🥖" : "🍞");
+    private void handleMessage(TextChannel channel, Message message) {
+        message.getAuthorAsMember().doOnNext(member -> {
+            message.addReaction(
+                ReactionEmoji.unicode(
+                    member.getDisplayName().contains("🇫🇷") ? "🥖" : "🍞"
+                )
+            ).subscribe();
+        }).subscribe();
 
         String messageContent = message.getContent().toLowerCase();
 
@@ -54,6 +61,8 @@ public class MessageHandler {
             return;
         }
 
-        CommandHandler.handleCommand(messageContent.substring(this.prefix.length()), channel, message);
+        CommandHandler commandHandler = CommandHandler.getInstance();
+
+        commandHandler.handleCommand(messageContent.substring(this.prefix.length()), channel, message);
     }
 }

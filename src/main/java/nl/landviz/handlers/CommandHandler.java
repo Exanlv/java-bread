@@ -1,22 +1,50 @@
 package nl.landviz.handlers;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.message.Message;
-
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.TextChannel;
 import nl.landviz.Bread;
+import nl.landviz.commands.BaseCommand;
+import nl.landviz.commands.HelpCommand;
 
 public class CommandHandler {
+    private static CommandHandler commandHandler = new CommandHandler();
+
     private static Bread bread = Bread.getInstance();
 
-    private CommandHandler() { }
+    private Map<String, Class<?>> commands = new HashMap<>();
 
-    public static void handleCommand(String commandString, ServerTextChannel channel, Message message) {
+    private CommandHandler() {
+        commands.put("help", HelpCommand.class);
+    }
+
+    public static CommandHandler getInstance() {
+        return commandHandler;
+    }
+
+    public void handleCommand(String commandString, TextChannel channel, Message message) {
         ArrayList<String> args = getArgs(commandString);
 
-        System.out.print(args);
+        System.out.println("asdf");
+
+        if (args.size() == 0) {
+            args.add("list");
+        }
+
+        Class<?> command = this.commands.get(args.get(0));
+
+        if (command == null) {
+            return;
+        }
+        
+        Constructor<?> constructor = command.getConstructor();
+        BaseCommand commandInstance = (BaseCommand) constructor.newInstance();
+        commandInstance.run();
     }
 
     private static ArrayList<String> getArgs(String commandString) {

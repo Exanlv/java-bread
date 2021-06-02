@@ -20,11 +20,10 @@
 
     <dependencies>
 		<dependency>
-			<groupId>org.javacord</groupId>
-			<artifactId>javacord</artifactId>
-			<version>3.3.0</version>
-			<type>pom</type>
-		</dependency>
+            <groupId>com.discord4j</groupId>
+            <artifactId>discord4j-core</artifactId>
+            <version>3.1.5</version>
+        </dependency>
 		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>dotenv-java</artifactId>
