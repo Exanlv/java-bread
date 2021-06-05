@@ -1,6 +1,7 @@
 package nl.landviz;
 
-import nl.landviz.handlers.CommandHandler;
+import nl.landviz.handlers.ChannelUpdateHandler;
+import nl.landviz.handlers.MemberUpdateHandler;
 import nl.landviz.handlers.MessageHandler;
 
 public class App {
@@ -9,8 +10,9 @@ public class App {
         Bread bread = Bread.getInstance();
         bread.initialize();
 
-        CommandHandler commandHandler = CommandHandler.getInstance();
         new MessageHandler();
+        new MemberUpdateHandler();
+        new ChannelUpdateHandler();
 
         bread.block();
     }

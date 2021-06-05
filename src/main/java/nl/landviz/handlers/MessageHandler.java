@@ -2,9 +2,15 @@ package nl.landviz.handlers;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.object.reaction.ReactionEmoji;
+
 import nl.landviz.Bread;
+import nl.landviz.cache.ChannelCache;
+import nl.landviz.cache.MemberCache;
+import nl.landviz.helpers.BreadChannelHelper;
+import nl.landviz.helpers.IsFrenchHelper;
 
 public class MessageHandler {
     private Bread bread = Bread.getInstance();
@@ -12,6 +18,11 @@ public class MessageHandler {
     private String prefix = "🍞";
     
     private String[] breadChannelIdentifiers =  {"🍞", "bread"};
+
+    private CommandHandler commandHandler = CommandHandler.getInstance();
+
+    public static ChannelCache channelCache = ChannelCache.getInstance();
+    public static MemberCache memberCache = MemberCache.getInstance();
 
     public MessageHandler() {
         this.register();
@@ -21,39 +32,55 @@ public class MessageHandler {
         this.bread.gateway.on(MessageCreateEvent.class).subscribe(event -> {
             Message message = event.getMessage();
 
-            message.getChannel().doOnNext(channel -> {
-                if (!(channel instanceof TextChannel textChannel)) {
-                    return;
-                }
+            String channelId = message.getChannelId().asString();
 
-                String channelName = textChannel.getName().toLowerCase();
+            boolean isBread = false;
 
-                boolean foundChannelIdentifier = false;
+            /**
+             * Determine whether to do anything with the message
+             */
+            if (MessageHandler.channelCache.isCached(channelId)) {
+                isBread = MessageHandler.channelCache.isBread(channelId);
+            } else {
+                if (message.getGuildId().isPresent()) {
+                    MessageChannel channel = message.getChannel().block();
 
-                for (int i = 0; i < this.breadChannelIdentifiers.length; i++) {
-                    if (channelName.contains(this.breadChannelIdentifiers[i])) {
-                        foundChannelIdentifier = true;
-                        break;
+                    if (channel instanceof TextChannel textChannel) {
+                        isBread = BreadChannelHelper.isBread(textChannel.getName());
                     }
                 }
 
-                if (!foundChannelIdentifier) {
-                    return;
-                }
+                MessageHandler.channelCache.setChannel(channelId, isBread);
+            }
 
-                handleMessage(textChannel, message);
-            }).subscribe();
+            if (!isBread) {
+                return;
+            }
+            
+            handleMessage(message);
         });
     }
 
-    private void handleMessage(TextChannel channel, Message message) {
-        message.getAuthorAsMember().doOnNext(member -> {
-            message.addReaction(
-                ReactionEmoji.unicode(
-                    member.getDisplayName().contains("🇫🇷") ? "🥖" : "🍞"
-                )
-            ).subscribe();
-        }).subscribe();
+    private void handleMessage(Message message) {
+        boolean isFrench = false;
+
+        /**
+         * Guild ID will always be present at this point
+         */
+        String userGuid = IsFrenchHelper.getUserGuid(
+            message.getGuildId().get().asLong(),
+            message.getUserData().id().asLong()
+        );
+
+        if (memberCache.isCached(userGuid)) {
+            isFrench = memberCache.isFrench(userGuid);
+        } else {
+            isFrench = IsFrenchHelper.isFrench(message.getAuthorAsMember().block().getDisplayName());
+
+            memberCache.setFrench(userGuid, isFrench);
+        }
+
+        message.addReaction(ReactionEmoji.unicode(isFrench ? "🥖" : "🍞")).subscribe();
 
         String messageContent = message.getContent().toLowerCase();
 
@@ -61,8 +88,6 @@ public class MessageHandler {
             return;
         }
 
-        CommandHandler commandHandler = CommandHandler.getInstance();
-
-        commandHandler.handleCommand(messageContent.substring(this.prefix.length()), channel, message);
+        this.commandHandler.handleCommand(messageContent.substring(this.prefix.length()), message);
     }
 }

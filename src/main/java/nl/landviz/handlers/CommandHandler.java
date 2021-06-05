@@ -1,55 +1,63 @@
 package nl.landviz.handlers;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.channel.TextChannel;
-import nl.landviz.Bread;
+
 import nl.landviz.commands.BaseCommand;
+import nl.landviz.commands.ErrorCommand;
 import nl.landviz.commands.HelpCommand;
+import nl.landviz.commands.PrivacyCommand;
+import nl.landviz.commands.UnknownCommand;
 
 public class CommandHandler {
     private static CommandHandler commandHandler = new CommandHandler();
 
-    private static Bread bread = Bread.getInstance();
-
-    private Map<String, Class<?>> commands = new HashMap<>();
+    private Map<String, Class<? extends BaseCommand>> commands = new HashMap<>();
 
     private CommandHandler() {
         commands.put("help", HelpCommand.class);
+        commands.put("privacy", PrivacyCommand.class);
     }
 
     public static CommandHandler getInstance() {
         return commandHandler;
     }
 
-    public void handleCommand(String commandString, TextChannel channel, Message message) {
+    public void handleCommand(String commandString, Message message) {
         ArrayList<String> args = getArgs(commandString);
-
-        System.out.println("asdf");
 
         if (args.size() == 0) {
             args.add("list");
         }
 
-        Class<?> command = this.commands.get(args.get(0));
+        Class<? extends BaseCommand> command = this.commands.get(args.get(0));
 
         if (command == null) {
+            UnknownCommand unknownCommand = new UnknownCommand(message);
+            unknownCommand.run();
+
             return;
         }
-        
-        Constructor<?> constructor = command.getConstructor();
-        BaseCommand commandInstance = (BaseCommand) constructor.newInstance();
-        commandInstance.run();
+
+        try {
+            Constructor<? extends BaseCommand> constructor = command.getConstructor(Message.class);
+            BaseCommand commandInstance = (BaseCommand) constructor.newInstance(message);
+            commandInstance.run();
+        } catch(NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
+            ErrorCommand errorCommand = new ErrorCommand(message);
+            errorCommand.run();
+        }
     }
 
     private static ArrayList<String> getArgs(String commandString) {
         ArrayList<String> args = new ArrayList<String>(Arrays.asList(commandString.split(" ")));
-        
+
         for (int i = args.size() - 1; i > -1; i--) {
             String arg = args.get(i);
             if (arg == " " || arg == "") {

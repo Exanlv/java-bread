@@ -1,14 +1,20 @@
 package nl.landviz.commands;
 
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.channel.TextChannel;
 
 public class HelpCommand extends BaseCommand {
-    public HelpCommand() { super(); }
+    public HelpCommand(Message message) { super(message); }
 
     public void run() {
-        TextChannel channel = (TextChannel) this.message.getChannel().block();
+        String message = "`🍞 help` - Shows this menu\n"
+                       + "`🍞 invite` - Invite Bread to a different server\n" 
+                       + "`🍞 top` - Display the bread leaderboard\n" 
+                       + "`🍞 me` - Display the amount of bread you've collected\n" 
+                       + "`🍞 gamble %amount%` - Waste away your life savings\n" 
+                       + "`🍞 privacy` - Privacy policy";
 
-        channel.createMessage("HELP");
+        this.message.getChannel().subscribe(channel -> {
+            channel.createMessage(message).subscribe();
+        });
     }
 }
