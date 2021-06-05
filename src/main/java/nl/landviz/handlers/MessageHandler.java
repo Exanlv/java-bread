@@ -9,6 +9,7 @@ import discord4j.core.object.reaction.ReactionEmoji;
 import nl.landviz.Bread;
 import nl.landviz.cache.ChannelCache;
 import nl.landviz.cache.MemberCache;
+import nl.landviz.cache.MessageCache;
 import nl.landviz.helpers.BreadChannelHelper;
 import nl.landviz.helpers.IsFrenchHelper;
 
@@ -17,12 +18,11 @@ public class MessageHandler {
 
     private String prefix = "🍞";
     
-    private String[] breadChannelIdentifiers =  {"🍞", "bread"};
-
     private CommandHandler commandHandler = CommandHandler.getInstance();
 
     public static ChannelCache channelCache = ChannelCache.getInstance();
-    public static MemberCache memberCache = MemberCache.getInstance();
+    public MemberCache memberCache = MemberCache.getInstance();
+    public MessageCache messageCache = MessageCache.getInstance(); 
 
     public MessageHandler() {
         this.register();
@@ -80,7 +80,11 @@ public class MessageHandler {
             memberCache.setFrench(userGuid, isFrench);
         }
 
-        message.addReaction(ReactionEmoji.unicode(isFrench ? "🥖" : "🍞")).subscribe();
+        String reaction = isFrench ? "🥖" : "🍞";
+
+        this.messageCache.cacheMessage(message.getId().asString(), reaction, message.getTimestamp());
+
+        message.addReaction(ReactionEmoji.unicode(reaction)).subscribe();
 
         String messageContent = message.getContent().toLowerCase();
 

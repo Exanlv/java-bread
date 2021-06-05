@@ -3,6 +3,7 @@ package nl.landviz;
 import nl.landviz.handlers.ChannelUpdateHandler;
 import nl.landviz.handlers.MemberUpdateHandler;
 import nl.landviz.handlers.MessageHandler;
+import nl.landviz.handlers.ReactionHandler;
 
 public class App {
     public static void main(String[] args)
@@ -13,6 +14,7 @@ public class App {
         new MessageHandler();
         new MemberUpdateHandler();
         new ChannelUpdateHandler();
+        new ReactionHandler();
 
         bread.block();
     }
