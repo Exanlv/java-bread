@@ -21,9 +21,7 @@ public class MemberUpdateHandler {
                     event.getGuildId().asLong(),
                     event.getMemberId().asLong()
                 ),
-                IsFrenchHelper.isFrench(
-                    event.getMember().block().getDisplayName()
-                )
+                event.getMember().block().getDisplayName()
             );
         });
     }

@@ -12,6 +12,8 @@ public class Bread {
     public DiscordClient client;
     public GatewayDiscordClient gateway;
 
+    public String ownId;
+
     private Bread() {
         this.client = DiscordClient.create(this.dotenv.get("DISCORD_TOKEN"));
     }
@@ -22,6 +24,7 @@ public class Bread {
 
     public void initialize() {
         this.gateway = this.client.login().block();
+        this.ownId = this.gateway.getSelfId().asString();
     }
 
     public void block() {

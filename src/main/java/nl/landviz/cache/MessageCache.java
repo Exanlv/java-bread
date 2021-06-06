@@ -2,6 +2,7 @@ package nl.landviz.cache;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import nl.landviz.entity.CachedMessage;
@@ -38,8 +39,6 @@ public class MessageCache {
     public boolean shouldAlterBreadScore(String messageId, String emoji) {
         CachedMessage message = this.getMessage(messageId);
 
-        System.out.println(message);
-
         if (message == null || !message.react.equals(emoji)) {
             return false;
         }
@@ -48,12 +47,30 @@ public class MessageCache {
 
         Duration timeAgo = Duration.between(message.createTime, now);
 
-        if (timeAgo.toHours() > breadTimeLimit) {
+        if (timeAgo.toHours() >= breadTimeLimit) {
             this.cache.remove(messageId);
 
             return false;
         }
 
         return true;
+    }
+
+    public void cleanCache() {
+        Instant now = Instant.now();
+
+        ArrayList<String> toRemove = new ArrayList<>();
+
+        for (Map.Entry<String, CachedMessage> entry : this.cache.entrySet()) {
+            Duration timeAgo = Duration.between(entry.getValue().createTime, now);
+
+            if (timeAgo.toHours() >= breadTimeLimit) {
+                toRemove.add(entry.getKey());
+            }
+        }
+
+        for (int i = 0; i < toRemove.size(); i++) {
+            this.cache.remove(toRemove.get(i));
+        }
     }
 }

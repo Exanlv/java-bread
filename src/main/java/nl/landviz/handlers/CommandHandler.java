@@ -10,6 +10,7 @@ import java.util.Map;
 import discord4j.core.object.entity.Message;
 
 import nl.landviz.commands.BaseCommand;
+import nl.landviz.commands.BreadAmountCommand;
 import nl.landviz.commands.ErrorCommand;
 import nl.landviz.commands.HelpCommand;
 import nl.landviz.commands.PrivacyCommand;
@@ -23,6 +24,7 @@ public class CommandHandler {
     private CommandHandler() {
         commands.put("help", HelpCommand.class);
         commands.put("privacy", PrivacyCommand.class);
+        commands.put("me", BreadAmountCommand.class);
     }
 
     public static CommandHandler getInstance() {

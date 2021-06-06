@@ -10,4 +10,8 @@ public class CachedMessage {
         this.createTime = createTime;
         this.react = react;
     }
+
+    public String toString() {
+        return this.react + "|" + this.createTime.toString();
+    }
 }

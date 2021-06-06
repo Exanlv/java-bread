@@ -31,4 +31,5 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/com/discord4j/stores-api/3.1.6/stores-api-3.1.6.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/austinv11/servicer/Servicer/1.0.3/Servicer-1.0.3.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/io/github/cdimascio/dotenv-java/2.2.0/dotenv-java-2.2.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/json/json/20210307/json-20210307.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

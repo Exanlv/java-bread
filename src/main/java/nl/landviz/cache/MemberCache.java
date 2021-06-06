@@ -3,10 +3,12 @@ package nl.landviz.cache;
 import java.util.HashMap;
 import java.util.Map;
 
+import nl.landviz.entity.CachedMember;
+
 public class MemberCache {
     private static MemberCache memberCache = new MemberCache();
 
-    private Map<String, Boolean> cache = new HashMap<>();
+    private Map<String, CachedMember> cache = new HashMap<>();
 
     private MemberCache() {
 
@@ -16,15 +18,15 @@ public class MemberCache {
         return memberCache;
     }
 
-    public void setFrench(String userGuid, boolean isFrench) {
-        this.cache.put(userGuid, isFrench);
+    public void setFrench(String userGuid, String displayName) {
+        this.cache.put(userGuid, new CachedMember(displayName));
     }
 
     public boolean isFrench(String userGuid) {
-        return this.cache.get(userGuid);
+        return this.cache.get(userGuid).isFrench;
     }
 
     public boolean isCached(String userGuid) {
-        return this.cache.get(userGuid) != null;
+        return this.cache.containsKey(userGuid);
     }
 }

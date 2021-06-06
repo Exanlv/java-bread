@@ -75,9 +75,7 @@ public class MessageHandler {
         if (memberCache.isCached(userGuid)) {
             isFrench = memberCache.isFrench(userGuid);
         } else {
-            isFrench = IsFrenchHelper.isFrench(message.getAuthorAsMember().block().getDisplayName());
-
-            memberCache.setFrench(userGuid, isFrench);
+            memberCache.setFrench(userGuid, message.getAuthorAsMember().block().getDisplayName());
         }
 
         String reaction = isFrench ? "🥖" : "🍞";
