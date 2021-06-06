@@ -1,11 +1,13 @@
 package nl.landviz.commands;
 
+import java.util.ArrayList;
+
 import discord4j.core.object.entity.Message;
 
 public class HelpCommand extends BaseCommand {
     public HelpCommand(Message message) { super(message); }
 
-    public void run() {
+    public void run(ArrayList<String> args) {
         String message = "`🍞 help` - Shows this menu\n"
                        + "`🍞 invite` - Invite Bread to a different server\n" 
                        + "`🍞 top` - Display the bread leaderboard\n" 

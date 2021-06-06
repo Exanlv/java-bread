@@ -1,5 +1,7 @@
 package nl.landviz.commands;
 
+import java.util.ArrayList;
+
 import discord4j.core.object.entity.Message;
 
 public class BaseCommand {
@@ -9,7 +11,7 @@ public class BaseCommand {
         this.message = message;
     }
 
-    public void run() {
+    public void run(ArrayList<String> args) {
 
         
     }

@@ -12,6 +12,7 @@ import discord4j.core.object.entity.Message;
 import nl.landviz.commands.BaseCommand;
 import nl.landviz.commands.BreadAmountCommand;
 import nl.landviz.commands.ErrorCommand;
+import nl.landviz.commands.GambleCommand;
 import nl.landviz.commands.HelpCommand;
 import nl.landviz.commands.PrivacyCommand;
 import nl.landviz.commands.UnknownCommand;
@@ -25,6 +26,7 @@ public class CommandHandler {
         commands.put("help", HelpCommand.class);
         commands.put("privacy", PrivacyCommand.class);
         commands.put("me", BreadAmountCommand.class);
+        commands.put("gamble", GambleCommand.class);
     }
 
     public static CommandHandler getInstance() {
@@ -40,20 +42,23 @@ public class CommandHandler {
 
         Class<? extends BaseCommand> command = this.commands.get(args.get(0));
 
+        args.remove(0);
+
         if (command == null) {
             UnknownCommand unknownCommand = new UnknownCommand(message);
-            unknownCommand.run();
+            unknownCommand.run(args);
 
             return;
         }
 
+
         try {
             Constructor<? extends BaseCommand> constructor = command.getConstructor(Message.class);
             BaseCommand commandInstance = (BaseCommand) constructor.newInstance(message);
-            commandInstance.run();
+            commandInstance.run(args);
         } catch(NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
             ErrorCommand errorCommand = new ErrorCommand(message);
-            errorCommand.run();
+            errorCommand.run(args);
         }
     }
 

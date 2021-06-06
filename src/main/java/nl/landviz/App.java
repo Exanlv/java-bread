@@ -30,8 +30,25 @@ public class App {
         TimerTask saveBread = new SaveBread(bread.dotenv.get("FILE_STORAGE"));
         TimerTask cleanCache = new CleanMessageCache();
 
-        timer.schedule(saveBread, 1000, 3000);
-        timer.schedule(cleanCache, 1000, 120000);
+        int saveInterval = Integer.parseInt(bread.dotenv.get("SAVE_INTERVAL")) * 1000;
+        int cacheInterval = Integer.parseInt(bread.dotenv.get("CACHE_INTERVAL")) * 1000;
+
+        long unixTimeStamp = System.currentTimeMillis();
+
+        System.out.println(unixTimeStamp % saveInterval);
+
+        timer.schedule(
+            saveBread,
+            saveInterval - (unixTimeStamp % saveInterval),
+            saveInterval
+        );
+
+        timer.schedule(
+            cleanCache,
+            // Add 30 seconds to make sure the tasks dont run at once
+            cacheInterval - (unixTimeStamp % cacheInterval) + 30000,
+            cacheInterval
+        );
     }
 
     private static void registerHandlers() {

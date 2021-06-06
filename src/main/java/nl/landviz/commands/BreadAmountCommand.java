@@ -1,5 +1,7 @@
 package nl.landviz.commands;
 
+import java.util.ArrayList;
+
 import discord4j.core.object.entity.Message;
 import nl.landviz.storage.BreadStorage;
 
@@ -10,7 +12,7 @@ public class BreadAmountCommand extends BaseCommand {
         super(message);
     }
 
-    public void run() {
+    public void run(ArrayList<String> args) {
         int breadAmount = this.breadStorage.getBread(
             this.message.getGuildId().get().asString(),
             this.message.getUserData().id().asString()

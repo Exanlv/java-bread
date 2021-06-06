@@ -1,11 +1,13 @@
 package nl.landviz.commands;
 
+import java.util.ArrayList;
+
 import discord4j.core.object.entity.Message;
 
 public class PrivacyCommand extends BaseCommand {
     public PrivacyCommand(Message message) { super(message); }
 
-    public void run() {
+    public void run(ArrayList<String> args) {
         String message = "**Data stored**\n"
                        + "The only data Bread (this bot) collects is how much bread (points) you have collected. This data is not shared with a third party.\n\n"
         

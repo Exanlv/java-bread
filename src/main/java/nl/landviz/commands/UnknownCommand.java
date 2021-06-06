@@ -1,5 +1,7 @@
 package nl.landviz.commands;
 
+import java.util.ArrayList;
+
 import discord4j.core.object.entity.Message;
 
 public class UnknownCommand extends BaseCommand {
@@ -7,7 +9,7 @@ public class UnknownCommand extends BaseCommand {
         super(message);
     }
 
-    public void run() {
+    public void run(ArrayList<String> args) {
         this.message.getChannel().subscribe(channel -> {
             channel.createMessage("Unknown command. Use `🍞 help` for a list of commands.").subscribe();
         });
