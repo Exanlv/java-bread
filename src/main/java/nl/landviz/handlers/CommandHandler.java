@@ -14,6 +14,7 @@ import nl.landviz.commands.BreadAmountCommand;
 import nl.landviz.commands.ErrorCommand;
 import nl.landviz.commands.GambleCommand;
 import nl.landviz.commands.HelpCommand;
+import nl.landviz.commands.InviteCommand;
 import nl.landviz.commands.PrivacyCommand;
 import nl.landviz.commands.TopListCommand;
 import nl.landviz.commands.UnknownCommand;
@@ -29,6 +30,7 @@ public class CommandHandler {
         commands.put("me", BreadAmountCommand.class);
         commands.put("gamble", GambleCommand.class);
         commands.put("top", TopListCommand.class);
+        commands.put("invite", InviteCommand.class);
     }
 
     public static CommandHandler getInstance() {
@@ -39,7 +41,7 @@ public class CommandHandler {
         ArrayList<String> args = getArgs(commandString);
 
         if (args.size() == 0) {
-            args.add("list");
+            args.add("top");
         }
 
         Class<? extends BaseCommand> command = this.commands.get(args.get(0));
