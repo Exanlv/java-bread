@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import nl.landviz.daemons.CleanMessageCache;
 import nl.landviz.daemons.SaveBread;
 import nl.landviz.handlers.ChannelUpdateHandler;
+import nl.landviz.handlers.GuildCreateHandler;
 import nl.landviz.handlers.MemberUpdateHandler;
 import nl.landviz.handlers.MessageHandler;
 import nl.landviz.handlers.ReactionHandler;
@@ -35,8 +36,6 @@ public class App {
 
         long unixTimeStamp = System.currentTimeMillis();
 
-        System.out.println(unixTimeStamp % saveInterval);
-
         timer.schedule(
             saveBread,
             saveInterval - (unixTimeStamp % saveInterval),
@@ -56,5 +55,6 @@ public class App {
         new MemberUpdateHandler();
         new ChannelUpdateHandler();
         new ReactionHandler();
+        new GuildCreateHandler();
     }
 }

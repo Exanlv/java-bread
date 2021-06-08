@@ -10,6 +10,8 @@ import java.util.Scanner;
 
 import org.json.JSONObject;
 
+import nl.landviz.entity.TopListUserInfo;
+
 public class BreadStorage {
     private static BreadStorage breadStorage = new BreadStorage();
 
@@ -90,7 +92,7 @@ public class BreadStorage {
         return this.data.get(guildId).getBreadAmount(userId);
     }
 
-    public String[] getTopList(String guildId) {
+    public TopListUserInfo[] getTopList(String guildId) {
         return this.data.get(guildId).getTopList();
     }
 }

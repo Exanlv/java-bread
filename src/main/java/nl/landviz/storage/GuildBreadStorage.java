@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import nl.landviz.entity.TopListUserInfo;
+
 public class GuildBreadStorage {
     private Map<String, Integer> data = new HashMap<>();
 
@@ -44,28 +46,31 @@ public class GuildBreadStorage {
         return this.data.get(userId);
     }
 
-    public String[] getTopList() {
-        ArrayList<String> topList = new ArrayList<String>();
+    public TopListUserInfo[] getTopList() {
+        ArrayList<TopListUserInfo> topList = new ArrayList<>();
 
         for (Map.Entry<String, Integer> entry : this.data.entrySet()) {
             try {
                 for (int i = 0; i < topList.size() + 1; i++) {
-                    String userId = topList.get(i);
-
-                    int breadAmount = this.data.get(userId);
+                    int breadAmount = topList.get(i).bread;
 
                     if (entry.getValue() > breadAmount) {
-                        topList.add(i, entry.getKey());
+                        topList.add(i, new TopListUserInfo(entry.getKey(), entry.getValue()));
 
                         break;
                     }
                 }
             } catch (IndexOutOfBoundsException exception) {
-                topList.add(entry.getKey());
+                topList.add(
+                    new TopListUserInfo(
+                        entry.getKey(),
+                        entry.getValue()
+                    )
+                );
             }
         }
 
-        return topList.toArray(new String[topList.size()]);
+        return topList.toArray(new TopListUserInfo[topList.size()]);
     }
 
     public JSONObject toJson() {

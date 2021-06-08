@@ -29,4 +29,12 @@ public class MemberCache {
     public boolean isCached(String userGuid) {
         return this.cache.containsKey(userGuid);
     }
+
+    public String getUsername(String userGuid) {
+        return this.cache.get(userGuid).displayName;
+    }
+
+    public void remove(String userGuid) {
+        this.cache.remove(userGuid);
+    }
 }
