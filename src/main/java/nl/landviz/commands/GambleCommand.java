@@ -10,17 +10,19 @@ public class GambleCommand extends BaseCommand {
 
     private String userId;
     private String guildId;
+    private String userTag;
 
     public GambleCommand(Message message) {
         super(message);
         this.userId = this.message.getUserData().id().asString();
         this.guildId = this.message.getGuildId().get().asString();
+        this.userTag = "<@" + this.userId + ">";
     }
 
     public void run(ArrayList<String> args) {
         if (args.size() == 0) {
             this.message.getChannel().subscribe(channel -> {
-                channel.createMessage("Specify how much bread you want to gamble").subscribe();
+                channel.createMessage(this.userTag + " specify how much bread you want to gamble").subscribe();
             });
 
             return;
@@ -39,7 +41,7 @@ public class GambleCommand extends BaseCommand {
 
                 if (amount > this.getBread()) {
                     this.message.getChannel().subscribe(channel -> {
-                        channel.createMessage("You dont have this much bread").subscribe();
+                        channel.createMessage(this.userTag + " you dont have this much bread").subscribe();
                     });
         
                     return;
@@ -64,7 +66,7 @@ public class GambleCommand extends BaseCommand {
 
             this.message.getChannel().subscribe(channel -> {
                 channel.createMessage(
-                    "You won! You now have " + this.getBread() + " bread! (+" + gambleAmount + ")"
+                    this.userTag + " you won! You now have " + this.getBread() + " bread! (+" + gambleAmount + ")"
                 ).subscribe();
             });
         } else {
@@ -72,7 +74,7 @@ public class GambleCommand extends BaseCommand {
 
             this.message.getChannel().subscribe(channel -> {
                 channel.createMessage(
-                    "You lost! You now have " + this.getBread() + " bread! (-" + gambleAmount + ")"
+                    this.userTag + " you lost! You now have " + this.getBread() + " bread! (-" + gambleAmount + ")"
                 ).subscribe();
             });
         }

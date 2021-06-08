@@ -14,8 +14,11 @@ public class Bread {
 
     public String ownId;
 
+    public String[] adminIds;
+
     private Bread() {
         this.client = DiscordClient.create(this.dotenv.get("DISCORD_TOKEN"));
+        this.adminIds = dotenv.get("ADMIN_IDS").split(",");
     }
 
     public static Bread getInstance() {

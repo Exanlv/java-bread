@@ -12,7 +12,10 @@ public class BaseCommand {
     }
 
     public void run(ArrayList<String> args) {
-
         
+    }
+
+    public boolean hasPermission() {
+        return true;
     }
 }

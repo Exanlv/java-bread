@@ -13,8 +13,10 @@ import nl.landviz.commands.BaseCommand;
 import nl.landviz.commands.BreadAmountCommand;
 import nl.landviz.commands.ErrorCommand;
 import nl.landviz.commands.GambleCommand;
+import nl.landviz.commands.GiveBreadCommand;
 import nl.landviz.commands.HelpCommand;
 import nl.landviz.commands.InviteCommand;
+import nl.landviz.commands.NoPermissionsCommand;
 import nl.landviz.commands.PrivacyCommand;
 import nl.landviz.commands.TopListCommand;
 import nl.landviz.commands.UnknownCommand;
@@ -31,6 +33,7 @@ public class CommandHandler {
         commands.put("gamble", GambleCommand.class);
         commands.put("top", TopListCommand.class);
         commands.put("invite", InviteCommand.class);
+        commands.put("give", GiveBreadCommand.class);
     }
 
     public static CommandHandler getInstance() {
@@ -59,7 +62,13 @@ public class CommandHandler {
         try {
             Constructor<? extends BaseCommand> constructor = command.getConstructor(Message.class);
             BaseCommand commandInstance = (BaseCommand) constructor.newInstance(message);
-            commandInstance.run(args);
+
+            if (commandInstance.hasPermission()) {
+                commandInstance.run(args);
+            } else {
+                NoPermissionsCommand noPermissionsCommand = new NoPermissionsCommand(message);
+                noPermissionsCommand.run(args);
+            }
         } catch(NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
             ErrorCommand errorCommand = new ErrorCommand(message);
             errorCommand.run(args);
