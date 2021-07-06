@@ -16,6 +16,7 @@ import nl.landviz.commands.GambleCommand;
 import nl.landviz.commands.GiveBreadCommand;
 import nl.landviz.commands.HelpCommand;
 import nl.landviz.commands.InviteCommand;
+import nl.landviz.commands.LotteryCommand;
 import nl.landviz.commands.NoPermissionsCommand;
 import nl.landviz.commands.PrivacyCommand;
 import nl.landviz.commands.TopListCommand;
@@ -34,6 +35,7 @@ public class CommandHandler {
         commands.put("top", TopListCommand.class);
         commands.put("invite", InviteCommand.class);
         commands.put("give", GiveBreadCommand.class);
+        commands.put("lottery", LotteryCommand.class);
     }
 
     public static CommandHandler getInstance() {
